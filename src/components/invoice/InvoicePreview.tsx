@@ -22,6 +22,7 @@ interface InvoiceData {
   items: InvoiceItem[];
   notes: string;
   terms: string;
+  discount: number;
 }
 
 interface InvoicePreviewProps {
@@ -32,7 +33,8 @@ interface InvoicePreviewProps {
 export function InvoicePreview({ data, template }: InvoicePreviewProps) {
   const subtotal = data.items.reduce((sum, item) => sum + (item.quantity * item.rate), 0);
   const totalTax = data.items.reduce((sum, item) => sum + (item.quantity * item.rate * item.tax / 100), 0);
-  const total = subtotal + totalTax;
+  const discountAmount = subtotal * (data.discount / 100);
+  const total = subtotal + totalTax - discountAmount;
 
   if (template === "minimal") {
     return (
@@ -113,6 +115,12 @@ export function InvoicePreview({ data, template }: InvoicePreviewProps) {
               <span className="text-gray-600">Tax:</span>
               <span className="text-gray-800">${totalTax.toFixed(2)}</span>
             </div>
+            {data.discount > 0 && (
+              <div className="flex justify-between py-1 text-sm">
+                <span className="text-green-600">Discount ({data.discount}%):</span>
+                <span className="text-green-600">-${discountAmount.toFixed(2)}</span>
+              </div>
+            )}
             <div className="flex justify-between py-2 border-t border-gray-200 font-semibold">
               <span className="text-gray-700">Total:</span>
               <span className="text-gray-800">${total.toFixed(2)}</span>
@@ -223,6 +231,12 @@ export function InvoicePreview({ data, template }: InvoicePreviewProps) {
               <span className="text-gray-600">Tax:</span>
               <span className="text-gray-800">${totalTax.toFixed(2)}</span>
             </div>
+            {data.discount > 0 && (
+              <div className="flex justify-between py-1 text-sm">
+                <span className="text-green-600">Discount ({data.discount}%):</span>
+                <span className="text-green-600">-${discountAmount.toFixed(2)}</span>
+              </div>
+            )}
             <div className="flex justify-between py-2 border-t border-gray-200 font-semibold text-lg">
               <span className="text-gray-700">Total:</span>
               <span className="text-blue-600">${total.toFixed(2)}</span>
@@ -332,6 +346,12 @@ export function InvoicePreview({ data, template }: InvoicePreviewProps) {
             <span className="text-gray-600">Tax:</span>
             <span className="text-gray-800">${totalTax.toFixed(2)}</span>
           </div>
+          {data.discount > 0 && (
+            <div className="flex justify-between py-1 text-sm font-medium">
+              <span className="text-green-600">Discount ({data.discount}%):</span>
+              <span className="text-green-600">-${discountAmount.toFixed(2)}</span>
+            </div>
+          )}
           <div className="flex justify-between py-2 border-t-2 border-gray-800 font-bold text-lg">
             <span className="text-gray-800">TOTAL:</span>
             <span className="text-gray-800">${total.toFixed(2)}</span>

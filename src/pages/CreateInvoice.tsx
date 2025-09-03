@@ -15,8 +15,10 @@ import {
   Send,
   Upload,
   Eye,
-  Palette
+  Palette,
+  Image
 } from "lucide-react";
+import html2canvas from "html2canvas";
 
 interface InvoiceItem {
   id: string;
@@ -40,12 +42,30 @@ const initialInvoiceData = {
   items: [] as InvoiceItem[],
   notes: "",
   terms: "Payment is due within 30 days of invoice date.",
+  discount: 0,
   template: "minimal"
 };
 
 export default function CreateInvoice() {
   const [invoiceData, setInvoiceData] = useState(initialInvoiceData);
   const [selectedTemplate, setSelectedTemplate] = useState("minimal");
+
+  const downloadAsImage = async () => {
+    const element = document.getElementById('invoice-preview');
+    if (element) {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        allowTaint: true
+      });
+      
+      const link = document.createElement('a');
+      link.download = `invoice-${invoiceData.invoiceNumber}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  };
 
   const addItem = () => {
     const newItem: InvoiceItem = {
@@ -87,7 +107,8 @@ export default function CreateInvoice() {
 
   const subtotal = invoiceData.items.reduce((sum, item) => sum + (item.quantity * item.rate), 0);
   const totalTax = invoiceData.items.reduce((sum, item) => sum + (item.quantity * item.rate * item.tax / 100), 0);
-  const total = subtotal + totalTax;
+  const discountAmount = subtotal * (invoiceData.discount / 100);
+  const total = subtotal + totalTax - discountAmount;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full animate-fade-in">
@@ -287,6 +308,12 @@ export default function CreateInvoice() {
                     <span>Tax:</span>
                     <span>${totalTax.toFixed(2)}</span>
                   </div>
+                  {invoiceData.discount > 0 && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Discount ({invoiceData.discount}%):</span>
+                      <span>-${discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-lg font-semibold border-t border-border pt-2">
                     <span>Total:</span>
                     <span>${total.toFixed(2)}</span>
@@ -301,6 +328,18 @@ export default function CreateInvoice() {
         <Card className="card-premium p-6">
           <h3 className="text-lg font-semibold mb-4">Additional Information</h3>
           <div className="space-y-4">
+            <div>
+              <Label htmlFor="discount">Discount (%)</Label>
+              <Input
+                id="discount"
+                type="number"
+                min="0"
+                max="100"
+                value={invoiceData.discount}
+                onChange={(e) => setInvoiceData(prev => ({ ...prev, discount: parseFloat(e.target.value) || 0 }))}
+                placeholder="Enter discount percentage"
+              />
+            </div>
             <div>
               <Label htmlFor="notes">Notes</Label>
               <Textarea
@@ -330,11 +369,15 @@ export default function CreateInvoice() {
             <Save className="w-4 h-4 mr-2" />
             Save Draft
           </Button>
-          <Button variant="outline" className="flex-1">
+          <Button variant="outline" onClick={downloadAsImage}>
+            <Image className="w-4 h-4 mr-2" />
+            Download Image
+          </Button>
+          <Button variant="outline">
             <Download className="w-4 h-4 mr-2" />
             Download PDF
           </Button>
-          <Button variant="outline" className="flex-1">
+          <Button variant="outline">
             <Send className="w-4 h-4 mr-2" />
             Send Invoice
           </Button>
@@ -360,7 +403,9 @@ export default function CreateInvoice() {
             </div>
           </div>
           <div className="p-4">
-            <InvoicePreview data={invoiceData} template={selectedTemplate} />
+            <div id="invoice-preview">
+              <InvoicePreview data={invoiceData} template={selectedTemplate} />
+            </div>
           </div>
         </Card>
       </div>
