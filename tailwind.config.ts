@@ -20,28 +20,50 @@ export default {
 		extend: {
 			colors: {
 				border: 'hsl(var(--border))',
+				'border-light': 'hsl(var(--border-light))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
+				background: {
+					DEFAULT: 'hsl(var(--background))',
+					secondary: 'hsl(var(--background-secondary))',
+					tertiary: 'hsl(var(--background-tertiary))',
+				},
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
+					light: 'hsl(var(--primary-light))',
+					dark: 'hsl(var(--primary-dark))',
+					glow: 'hsl(var(--primary-glow))',
 					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
+					hover: 'hsl(var(--secondary-hover))',
 					foreground: 'hsl(var(--secondary-foreground))'
+				},
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					light: 'hsl(var(--success-light))',
+					foreground: 'hsl(var(--success-foreground))'
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					light: 'hsl(var(--warning-light))',
+					foreground: 'hsl(var(--warning-foreground))'
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
+					light: 'hsl(var(--destructive-light))',
 					foreground: 'hsl(var(--destructive-foreground))'
 				},
 				muted: {
 					DEFAULT: 'hsl(var(--muted))',
+					dark: 'hsl(var(--muted-dark))',
 					foreground: 'hsl(var(--muted-foreground))'
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
+					hover: 'hsl(var(--accent-hover))',
 					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {
@@ -50,6 +72,7 @@ export default {
 				},
 				card: {
 					DEFAULT: 'hsl(var(--card))',
+					hover: 'hsl(var(--card-hover))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				sidebar: {
@@ -62,6 +85,18 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				}
+			},
+			fontFamily: {
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+			},
+			backgroundImage: {
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-secondary': 'var(--gradient-secondary)',
+				'gradient-hero': 'var(--gradient-hero)',
+			},
+			boxShadow: {
+				'glow': 'var(--shadow-glow)',
+				'premium': 'var(--shadow-md)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
